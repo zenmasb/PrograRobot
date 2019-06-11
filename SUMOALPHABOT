@@ -1,7 +1,8 @@
-'| -------------------------- variables -------------------------- |
-VelocidadAB= 80
-VelocidadC= 70
-Time= ev3.Time
+'| -------------------------- Variables -------------------------- |
+
+VelocidadAB= 80 'Variable que se utilizara para los motores A y B (Ruedas) en el caso de que sea necesario
+VelocidadC= 70  'Variable que se utilizara para los motores C (Helice) en el caso de que sea necesario
+Time= ev3.Time 'Variable de tiempo que se utilizara para que el programa se ejecute 90 segundos
 mutex=Thread.CreateMutex()
 
 '| ------------------------- Sub Rutinas ------------------------ |
@@ -47,4 +48,8 @@ While Time<90000
   Sonidoup()
 EndWhile
 
-'| --------------------- Fin Competencia -------------------- |
+'| ------------------ Fin de la Competencia ----------------- |
+
+'| --------------------------- GitHub ---------------------------- |
+'El código sumo se puede encontrar en mi GitHub /// URL: https://github.com/zenmasb/PrograRobot/blob/master/SUMOALPHABOT
+'Grupo de Trabajo: ALPHABOT
