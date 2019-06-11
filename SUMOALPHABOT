@@ -8,7 +8,7 @@ mutex=Thread.CreateMutex()
 '| ------------------------- Sub Rutinas ------------------------ |
 
 Sub Esquivar  'Esto representara la sub rutina de esquivar el punto limite de la pista para que este no pierda el torneo
-  If Sensor.ReadPercent(3)<6 Then
+  If Sensor.ReadRawValue(3,3) <6 Then
       Motor.Start("AB",-100)
       Program.Delay(400)  
       Motor.StartSync("AB",-100,100)
