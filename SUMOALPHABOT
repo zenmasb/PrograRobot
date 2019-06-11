@@ -1,6 +1,6 @@
 '| -------------------------- Variables -------------------------- |
 
-VelocidadAB= 80 'Variable que se utilizara para los motores A y B (Ruedas) en el caso de que sea necesario
+VelocidadAB= 90 'Variable que se utilizara para los motores A y B (Ruedas) en el caso de que sea necesario
 VelocidadC= 70  'Variable que se utilizara para los motores C (Helice) en el caso de que sea necesario
 Time= ev3.Time 'Variable de tiempo que se utilizara para que el programa se ejecute 90 segundos
 mutex=Thread.CreateMutex()
@@ -8,7 +8,7 @@ mutex=Thread.CreateMutex()
 '| ------------------------- Sub Rutinas ------------------------ |
 
 Sub Esquivar  'Esto representara la sub rutina de esquivar el punto limite de la pista para que este no pierda el torneo
-  If Sensor.ReadPercent(3)<6
+  If Sensor.ReadPercent(3)<6 Then
       Motor.Start("AB",-100)
       Program.Delay(400)  
       Motor.StartSync("AB",-100,100)
@@ -18,30 +18,29 @@ EndSub
 
 Sub Boost1
   If Sensor.ReadPercent(1)=100 Then
-    Motor.Start("C",-VelocidadC+10)
-    VelocidadAB = VelocidadAB+20
+    Motor.Start("C",-VelocidadC+30)
+    VelocidadAB = VelocidadAB+10
   Endif
 Endsub
 
 Sub Boost2
   If Sensor.ReadPercent(2)=100 Then
-    Motor.Start("C",VelocidadC+10)
-    VelocidadAB = VelocidadAB+20
+    Motor.Start("C",VelocidadC+30)
+    VelocidadAB = VelocidadAB+10
   Endif
 Endsub
 
 Sub Sonidoup
   If Sensor.ReadRawValue(4,0)= 30 Then 'sensor de proximidad
      Thread.Lock(mutex)
-     Motor.Start("AB",VelocidadAB+20)
+     Motor.Start("AB",VelocidadAB+10)
      Thread.Unlock (mutex) 
-  EndIf
-EndSub
-
+   EndIf
+   
 '| ----------------------- Competencia ----------------------- |
 
 While Time<90000
-  Motor.Start("AB",90)
+  Motor.Start("AB",VelocidadAB)
   Esquivar()
   Boost1()
   Boost2()
