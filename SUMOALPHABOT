@@ -1,0 +1,50 @@
+'| -------------------------- variables -------------------------- |
+VelocidadAB= 80
+VelocidadC= 70
+Time= ev3.Time
+mutex=Thread.CreateMutex()
+
+'| ------------------------- Sub Rutinas ------------------------ |
+
+Sub Esquivar  'Esto representara la sub rutina de esquivar el punto limite de la pista para que este no pierda el torneo
+  If Sensor.ReadPercent(3)<6
+      Motor.Start("AB",-100)
+      Program.Delay(400)  
+      Motor.StartSync("AB",-100,100)
+      Program.Delay(400)
+  EndIf 
+EndSub
+
+Sub Boost1
+  If Sensor.ReadPercent(1)=100 Then
+    Motor.Start("C",-VelocidadC+10)
+    VelocidadAB = VelocidadAB+20
+  Endif
+Endsub
+
+Sub Boost2
+  If Sensor.ReadPercent(2)=100 Then
+    Motor.Start("C",VelocidadC+10)
+    VelocidadAB = VelocidadAB+20
+  Endif
+Endsub
+
+Sub Sonidoup
+  If Sensor.ReadRawValue(4,0)= 30 Then 'sensor de proximidad
+     Thread.Lock(mutex)
+     Motor.Start("AB",VelocidadAB+20)
+     Thread.Unlock (mutex) 
+  EndIf
+EndSub
+
+'| ----------------------- Competencia ----------------------- |
+
+While Time<90000
+  Motor.Start("AB",90)
+  Esquivar()
+  Boost1()
+  Boost2()
+  Sonidoup()
+EndWhile
+
+'| --------------------- Fin Competencia -------------------- |
