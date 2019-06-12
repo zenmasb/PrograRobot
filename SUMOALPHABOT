@@ -3,16 +3,18 @@
 VelocidadAB= 90 'Variable que se utilizara para los motores A y B (Ruedas) en el caso de que sea necesario
 VelocidadC= 70  'Variable que se utilizara para los motores C (Helice) en el caso de que sea necesario
 Time= ev3.Time 'Variable de tiempo que se utilizara para que el programa se ejecute 90 segundos
-mutex=Thread.CreateMutex()
+mutex=Thread.CreateMutex() 'Variable del mutex
+Sensor.SetMode(3,0)'Modo 3 del sensor de luz
+Sensor.SetMode(4,0)'Modo 0 del sensor de proximidad
 
 '| ------------------------- Sub Rutinas ------------------------ |
 
 Sub Esquivar  'Esto representara la sub rutina de esquivar el punto limite de la pista para que este no pierda el torneo
-  If Sensor.SetMode(3,3) <6 Then
+  If Sensor.ReadPercent(3)<6 Then
       Motor.Start("AB",-100)
-      Program.Delay(400)  
+      Program.Delay(450)  
       Motor.StartSync("AB",-100,100)
-      Program.Delay(400)
+      Program.Delay(450)
   EndIf 
 EndSub
 
@@ -31,22 +33,24 @@ Sub Boost2
 Endsub
 
 Sub Sonidoup
-  If Sensor.SetMode(4,3)= 60 Then 'sensor de proximidad
+  If Sensor.ReadRawValue(4,0)<=100 Then 'sensor de proximidad
      Thread.Lock(mutex)
      Motor.Start("AB",VelocidadAB+10)
      Thread.Unlock (mutex) 
    EndIf
+EndSub   
    
 '| ----------------------- Competencia ----------------------- |
 
-While Time<90000
+While ev3.Time-Time<=90000
   Motor.Start("AB",VelocidadAB)
   Esquivar()
   Boost1()
   Boost2()
   Sonidoup()
 EndWhile
-
+Motor.Stop("AB","True")
+Motor.Stop("C","true")
 '| ------------------ Fin de la Competencia ----------------- |
 
 '| --------------------------- GitHub ---------------------------- |
