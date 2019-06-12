@@ -20,7 +20,7 @@ EndSub
 
 Sub Boost1
   If Sensor.ReadPercent(1)=100 Then
-    Motor.Start("C",-VelocidadC+30)
+    Motor.Start("C",VelocidadC+30)
     VelocidadAB = VelocidadAB+10
   Endif
 Endsub
