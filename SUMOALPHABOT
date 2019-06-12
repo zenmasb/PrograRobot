@@ -31,7 +31,7 @@ Sub Boost2
 Endsub
 
 Sub Sonidoup
-  If Sensor.SetMode(3,3)= 30 Then 'sensor de proximidad
+  If Sensor.SetMode(4,3)= 60 Then 'sensor de proximidad
      Thread.Lock(mutex)
      Motor.Start("AB",VelocidadAB+10)
      Thread.Unlock (mutex) 
