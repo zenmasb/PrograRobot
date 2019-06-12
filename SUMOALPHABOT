@@ -1,58 +1,63 @@
+'Código Fuente:
+
 '| -------------------------- Variables -------------------------- |
 
 VelocidadAB= 90 'Variable que se utilizara para los motores A y B (Ruedas) en el caso de que sea necesario
-VelocidadC= 70  'Variable que se utilizara para los motores C (Helice) en el caso de que sea necesario
-Time= ev3.Time 'Variable de tiempo que se utilizara para que el programa se ejecute 90 segundos
+VelocidadC= 70  'Variable que se utilizara para los motores C (Hélice) en el caso de que sea necesario
+Time= ev3.Time 'Variable de tiempo que se utilizara para que el programa se ejecute hasta 90 segundos
 mutex=Thread.CreateMutex() 'Variable del mutex
-Sensor.SetMode(3,0)'Modo 3 del sensor de luz
-Sensor.SetMode(4,0)'Modo 0 del sensor de proximidad
+Sensor.SetMode(3,0) 'Modo 0 del sensor de luz
+Sensor.SetMode(4,0) 'Modo 0 del sensor de proximidad
 
 '| ------------------------- Sub Rutinas ------------------------ |
 
 Sub Esquivar  'Esto representara la sub rutina de esquivar el punto limite de la pista para que este no pierda el torneo
-  If Sensor.ReadPercent(3)<6 Then
-      Motor.Start("AB",-100)
-      Program.Delay(450)  
-      Motor.StartSync("AB",-100,100)
-      Program.Delay(450)
-  EndIf 
-EndSub
+  If Sensor.ReadPercent(3)<6 Then 'Condición: Si el sensor de luz encuentra valores menores que 6 (osea que detectara la linea negra) entonces:
+      Motor.Start("AB",-100) 'Los motores harán que el robot retroceda
+      Program.Delay(450) 'Retrocederá en un tiempo de 0,45 segundos
+      Motor.StartSync("AB",-100,100) 'Después hará un giro ya que el motor A esta retrocediendo y el motor B avanza produciendo un giro
+      Program.Delay(450) 'El giro durará 0,45 segundos.
+  EndIf 'Si lo dicho ocurrió finaliza la condición 
+EndSub 'Finaliza la sub rutina de Esquivar con el robot evitando el limite de la pista
 
-Sub Boost1
-  If Sensor.ReadPercent(1)=100 Then
-    Motor.Start("C",VelocidadC+30)
-    VelocidadAB = VelocidadAB+10
-  Endif
-Endsub
+Sub Boost1 'Esta sub rutina funciona con los sensor de tacto 1 del robot, al momento de ser presionado mejorará los motores A,B Y C
+  If Sensor.ReadPercent(1)=100 Then 'La condición dice que se llevara a cabo una función que se activará después de que el sensor de tacto sea presionado
+    Motor.Start("C",VelocidadC+30) 'Se le agregará 30 a la variable C haciendo que la hélice gire mas rápido
+    VelocidadAB = VelocidadAB+10 'Se le agregará 10 a la variable VelocidadAB haciendo que las ruedas vayan mas rápido
+  Endif 'Finaliza la condición después de que el sensor de tacto haya sido presionado
+Endsub 'Finaliza la sub rutina con las variables de velocidades mejoradas
 
-Sub Boost2
-  If Sensor.ReadPercent(2)=100 Then
-    Motor.Start("C",VelocidadC+30)
-    VelocidadAB = VelocidadAB+10
-  Endif
-Endsub
-
-Sub Sonidoup
-  If Sensor.ReadRawValue(4,0)<=100 Then 'sensor de proximidad
-     Thread.Lock(mutex)
-     Motor.Start("AB",VelocidadAB+10)
-     Thread.Unlock (mutex) 
-   EndIf
-EndSub   
-   
+Sub Boost2 'Esta sub rutina funciona con los sensor de tacto 2 del robot, al momento de ser presionado mejorará los motores A,B Y C
+  If Sensor.ReadPercent(2)=100 Then 'La condición dice que se llevara a cabo una función que se activará después de que el sensor de tacto sea presionado
+    Motor.Start("C",VelocidadC+30) 'Se le agregará 30 a la variable C haciendo que la hélice gire mas rápido
+    VelocidadAB = VelocidadAB+10 'Se le agregará 10 a la variable VelocidadAB haciendo que las ruedas vayan mas rápido
+  Endif 'Finaliza la condición después de que el sensor de tacto haya sido presionado
+Endsub 'Finaliza la sub rutina con las variables de velocidades mejoradas
+ 
+ Sub Sonidoup 'Sub rutina del sensor de ultra sonido que hace una mejora a los motores A, B, la mejora consiste en un mejorar la velocidad de los motores mencionados anteriormente.
+   If Sensor.ReadRawValue(4,0)<=100 Then ' si el Sensor de Ultra sonido encuentra a un contrincante a 10cm de nuestro robot entonces hará una mejora a nuestros motores A y B
+     Thread.Lock(mutex) 'Abre el thread, la variable creada llamada mutex priorizara las velocidades
+     Motor.Start("AB",VelocidadAB+10) 'Mejorara la velocidad aumentando la variable Velocidad AB para los motores A y B
+     Thread.Unlock (mutex) 'Cierra el thread
+   EndIf 'La condición ya habrá finalizado
+EndSub  'El robot ya habrá mejorado las variables A y B
+ 
 '| ----------------------- Competencia ----------------------- |
 
-While ev3.Time-Time<=90000
-  Motor.Start("AB",VelocidadAB)
-  Esquivar()
-  Boost1()
-  Boost2()
-  Sonidoup()
-EndWhile
-Motor.Stop("AB","True")
-Motor.Stop("C","true")
+While ev3.Time-Time<=90000 'Esto dirá que mientras el tiempo sea menor o igual a noventa segundos el robot hará lo pedido:
+  Motor.Start("AB",VelocidadAB) 'El robot Avanzará a una velocidadAB que es de 90 que es aplicada a los motores A y B, el robot avanzara hasta que el tiempo definido anteriormente haya transcurrido (90 segundos)
+  Esquivar() 'Llevará a cabo la sub rutina rutina Esquivar
+  Boost1() 'Llevará a cabo la sub rutina rutina Boost1
+  Boost2() 'Llevará a cabo la sub rutina rutina Boost2
+  Sonidoup() 'Llevará a cabo la sub rutina rutina Sonidoup()
+EndWhile 'Transcurrido los noventa segundos, El robot ya habrá cumplido con las instrucciones escritas
+Motor.Stop("AB","True") 'El robot Finaliza su competencia parando los motores A y B
+Motor.Stop("C","True") 'El robot Finaliza su competencia parando el motor C
+
 '| ------------------ Fin de la Competencia ----------------- |
 
 '| --------------------------- GitHub ---------------------------- |
+
 'El código sumo se puede encontrar en mi GitHub /// URL: https://github.com/zenmasb/PrograRobot/blob/master/SUMOALPHABOT
+
 'Grupo de Trabajo: ALPHABOT
